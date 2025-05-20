@@ -1,18 +1,30 @@
-node_modules
+# Dependencies
+node_modules/
 npm-debug.log
-test
-temp*
+yarn-debug.log
+yarn-error.log
 
+# Environment variables
 .env
+.env.local
+.env.*.local
 
-### https://raw.github.com/github/gitignore/b304edf487ce607174e188712225b5269d43f279/Global/OSX.gitignore
+# Package files
+package-lock.json
+yarn.lock
 
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
 .DS_Store
-.AppleDouble
-.LSOverride
 
-### IDE Settings (EditorConfig/Sublime)
-.editorconfig
+# Build output
+dist/
+build/
+coverage/
 
-### IDE Settings (VSCode)
-.vscode
+# Logs
+logs/
+*.log 
