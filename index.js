@@ -14,9 +14,9 @@
 
 "use strict";
 
-const request = require("request");
 const express = require("express");
 const bodyParser = require("body-parser");
+const axios = require("axios");
 
 const app = express();
 app.use(bodyParser.json());
@@ -24,12 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname + "/public"));
 
-// Internal integration only (No OAuth)
-//const oauthToken = process.env.SLACK_AUTH_TOKEN;
-
-// I am using this to store tokens quickly for this demo, but you probably want to use a real DB!
-const storage = require("node-persist");
-storage.initSync();
+// Store tokens in memory (for demo purposes)
+// In production, you should use a proper database
+const tokenStorage = new Map();
 
 let apiUrl = "https://slack.com/api";
 
@@ -38,10 +35,7 @@ let apiUrl = "https://slack.com/api";
 /* ***************************** */
 
 app.post("/echo", (req, res) => {
-  //console.log(req.body);
-
   if (req.body.token !== process.env.SLACK_VERIFICATION_TOKEN) {
-    // the request is NOT coming from Slack!
     res.sendStatus(401);
     return;
   } else {
@@ -52,23 +46,28 @@ app.post("/echo", (req, res) => {
 });
 
 // User info
-const getUserFullname = (team, user) =>
-  new Promise((resolve, reject) => {
-    let oauthToken = storage.getItemSync(team);
-    console.log(oauthToken);
-    request.post(
+const getUserFullname = async (team, user) => {
+  try {
+    const oauthToken = tokenStorage.get(team);
+    if (!oauthToken) return "The user";
+
+    const response = await axios.post(
       "https://slack.com/api/users.info",
-      { form: { token: oauthToken, user: user } },
-      function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-          console.log(body);
-          return resolve(JSON.parse(body).user.real_name);
-        } else {
-          return resolve("The user");
-        }
+      null,
+      {
+        params: { token: oauthToken, user: user },
       }
     );
-  });
+
+    if (response.data && response.data.ok) {
+      return response.data.user.real_name;
+    }
+    return "The user";
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    return "The user";
+  }
+};
 
 // Reply in JSON
 const getReply = (body) =>
@@ -109,45 +108,44 @@ const getReply = (body) =>
 /* implement when distributing the bot
 /* ***************************** */
 
-app.get("/auth", function (req, res) {
+app.get("/auth", async function (req, res) {
   if (!req.query.code) {
-    // access denied
     console.log("Access denied");
-    return;
+    return res.sendStatus(400);
   }
-  var data = {
-    form: {
-      client_id: process.env.SLACK_CLIENT_ID,
-      client_secret: process.env.SLACK_CLIENT_SECRET,
-      code: req.query.code,
-    },
-  };
-  request.post(
-    apiUrl + "/oauth.access",
-    data,
-    function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        // Get an auth token (and store the team_id / token)
-        storage.setItemSync(
-          JSON.parse(body).team_id,
-          JSON.parse(body).access_token
-        );
 
-        res.sendStatus(200);
+  try {
+    const response = await axios.post(apiUrl + "/oauth.access", null, {
+      params: {
+        client_id: process.env.SLACK_CLIENT_ID,
+        client_secret: process.env.SLACK_CLIENT_SECRET,
+        code: req.query.code,
+      },
+    });
 
-        // Show a nicer web page or redirect to Slack, instead of just giving 200 in reality!
-        //res.redirect(__dirname + "/public/success.html");
-      }
+    if (response.data && response.data.ok) {
+      // Store the token in memory
+      tokenStorage.set(response.data.team_id, response.data.access_token);
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
     }
-  );
+  } catch (error) {
+    console.error("OAuth error:", error);
+    res.sendStatus(500);
+  }
 });
 
 /* Extra */
 
 app.get("/team/:id", function (req, res) {
   try {
-    let id = req.params.id;
-    let token = storage.getItemSync(id);
+    const id = req.params.id;
+    const token = tokenStorage.get(id);
+
+    if (!token) {
+      return res.sendStatus(404);
+    }
 
     res.send({
       team_id: id,
