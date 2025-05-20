@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import { config } from "./config/config";
-import { SlackController } from "./controllers/slackAuth.controller";
-import { ConversationController } from "./controllers/conversation.controller";
-import { UserController } from "./controllers/user.controller";
-import { ChannelController } from "./controllers/channel.controller";
+import { config } from "./src/config/config";
+import { SlackController } from "./src/controllers/slackAuth.controller";
+import { ConversationController } from "./src/controllers/conversation.controller";
+import { UserController } from "./src/controllers/user.controller";
+import { ChannelController } from "./src/controllers/channel.controller";
 
 const app = express();
 const slackController = new SlackController();
