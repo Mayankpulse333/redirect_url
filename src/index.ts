@@ -1,11 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import { config } from "./src/config/config";
-import { SlackController } from "./src/controllers/slackAuth.controller";
-import { ConversationController } from "./src/controllers/conversation.controller";
-import { UserController } from "./src/controllers/user.controller";
-import { ChannelController } from "./src/controllers/channel.controller";
-import { VercelRequest, VercelResponse } from "@vercel/node";
+import { config } from "./config/config";
+import { SlackController } from "./controllers/slackAuth.controller";
+import { ConversationController } from "./controllers/conversation.controller";
+import { UserController } from "./controllers/user.controller";
+import { ChannelController } from "./controllers/channel.controller";
 
 const app = express();
 const slackController = new SlackController();
@@ -32,10 +31,7 @@ app.get("/", slackController.getHealth);
 
 // Create HTTP server
 const port = process.env.PORT || config.port;
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-export default (req: VercelRequest, res: VercelResponse) => {
-  app(req as any, res as any);
-};

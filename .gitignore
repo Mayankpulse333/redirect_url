@@ -20,8 +20,7 @@ yarn.lock
 *.swo
 .DS_Store
 
-# Build output
-dist/
+
 build/
 coverage/
 
