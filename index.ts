@@ -5,6 +5,7 @@ import { SlackController } from "./src/controllers/slackAuth.controller";
 import { ConversationController } from "./src/controllers/conversation.controller";
 import { UserController } from "./src/controllers/user.controller";
 import { ChannelController } from "./src/controllers/channel.controller";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 
 const app = express();
 const slackController = new SlackController();
@@ -34,3 +35,7 @@ const port = process.env.PORT || config.port;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+export default (req: VercelRequest, res: VercelResponse) => {
+  app(req as any, res as any);
+};
