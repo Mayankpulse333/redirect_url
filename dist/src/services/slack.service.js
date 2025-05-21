@@ -63,7 +63,7 @@ class SlackService {
             "im:read",
         ].join(",");
         const state = encodeURIComponent("tenant=zluri");
-        return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&user_scope=users:read&redirect_uri=${config_1.config.slack.redirectUri}&state=${state}`;
+        return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&user_scope=&redirect_uri=${config_1.config.slack.redirectUri}&state=${state}`;
     }
     /**
      * Handle OAuth callback and save the response to database
