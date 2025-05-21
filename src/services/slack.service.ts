@@ -85,7 +85,9 @@ export class SlackService {
       "chat:write",
     ].join(",");
 
-    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config.slack.redirectUri}?tenant=zluri`;
+    const state = encodeURIComponent("tenant=zluri");
+
+    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config.slack.redirectUri}&state=${state}`;
   }
 
   /**
