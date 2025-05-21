@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventsController = void 0;
-const slack_service_1 = require("../services/slack.service");
 class EventsController {
     constructor() {
         this.handleEventVerification = async (req, res) => {
@@ -25,7 +24,6 @@ class EventsController {
             }
             res.status(200).json({ message: req.body });
         };
-        this.slackService = slack_service_1.SlackService.getInstance();
     }
 }
 exports.EventsController = EventsController;
