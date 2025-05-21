@@ -93,17 +93,17 @@ export class SlackService {
         redirect_uri: config.slack.redirectUri,
       });
 
-      // Save to database
-      const slackAuth = new SlackAuth({
-        ...response,
-        tenant: tenant ?? "NA",
-      });
-      await slackAuth.save();
+      // // Save to database
+      // const slackAuth = new SlackAuth({
+      //   ...response,
+      //   tenant: tenant ?? "NA",
+      // });
+      // await slackAuth.save();
 
-      // Update token and reinitialize client
-      this.token = response.authed_user?.access_token || null;
-      this.client = null; // Force client reinitialization
-      await this.initializeClient();
+      // // Update token and reinitialize client
+      // this.token = response?.authed_user?.access_token || null;
+      // this.client = null; // Force client reinitialization
+      // await this.initializeClient();
 
       return response as SlackOAuthResponse;
     } catch (error) {
