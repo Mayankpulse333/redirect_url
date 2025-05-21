@@ -73,7 +73,12 @@ export class SlackService {
 
     const state = encodeURIComponent("tenant=zluri");
 
-    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=email&redirect_uri=${config.slack.redirectUri}&state=${state}`;
+    const url =
+      "https://slack.com/oauth/v2/authorize?client_id=8231632623654.8920166575490&scope=app_mentions:read,calls:read,channels:history,channels:join,channels:read,chat:write,chat:write.public,conversations.connect:manage,conversations.connect:read,groups:history,groups:read,links:read,usergroups:read,users:read,mpim:read,im:read&user_scope=email&redirect_uri=${config.slack.redirectUri}";
+
+    return url;
+
+    // return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=email&redirect_uri=${config.slack.redirectUri}&state=${state}`;
   }
 
   /**
