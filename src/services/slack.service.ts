@@ -101,7 +101,7 @@ export class SlackService {
       await slackAuth.save();
 
       // // Update token and reinitialize client
-      this.token = response?.authed_user?.access_token || null;
+      this.token = response?.access_token || null;
       this.client = null; // Force client reinitialization
       await this.initializeClient();
 
