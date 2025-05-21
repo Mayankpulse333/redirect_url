@@ -37,4 +37,34 @@ export class UserController {
       });
     }
   };
+
+  public getTeamDetails = async (req: Request, res: Response) => {
+    try {
+      const { teamId } = req.query;
+
+      if (!teamId || typeof teamId !== "string") {
+        res.status(400).json({
+          success: false,
+          error: "User ID is required and must be a string",
+        });
+        return;
+      }
+
+      const teamDetails = await this.slackService.getTeamInfo(teamId);
+
+      res.status(200).json({
+        success: true,
+        data: teamDetails,
+      });
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      res.status(500).json({
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch user details",
+      });
+    }
+  };
 }

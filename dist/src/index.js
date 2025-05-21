@@ -28,6 +28,7 @@ app.get("/auth/slack", slackController.getAuthPage);
 app.get("/auth/slack/callback", slackController.handleCallback);
 app.get("/api/conversations", conversationController.getConversations);
 app.get("/api/users", userController.getUserDetails);
+app.get("/api/team", userController.getTeamDetails);
 app.get("/api/channels/messages", channelController.getChannelMessages);
 app.get("/", slackController.getHealth);
 // Create HTTP server
