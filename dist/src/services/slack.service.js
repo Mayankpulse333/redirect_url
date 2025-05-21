@@ -62,21 +62,9 @@ class SlackService {
             "mpim:read",
             "im:read",
         ].join(",");
-        const userScopes = [
-            "channels:history",
-            "channels:read",
-            "channels:write",
-            "groups:history",
-            "groups:read",
-            "identify",
-            "im:history",
-            "team:read",
-            "usergroups:read",
-            "users:read",
-            "chat:write",
-        ].join(",");
+        const userScopes = ["email"].join(",");
         const state = encodeURIComponent("tenant=zluri");
-        return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&redirect_uri=${config_1.config.slack.redirectUri}&state=${state}`;
+        return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config_1.config.slack.redirectUri}&state=${state}`;
     }
     /**
      * Handle OAuth callback and save the response to database
