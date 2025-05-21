@@ -87,7 +87,7 @@ export class SlackService {
 
     const state = encodeURIComponent("tenant=zluri");
 
-    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config.slack.redirectUri}&state=${state}`;
+    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&redirect_uri=${config.slack.redirectUri}&state=${state}`;
   }
 
   /**
