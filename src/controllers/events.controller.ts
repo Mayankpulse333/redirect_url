@@ -9,7 +9,7 @@ export class EventsController {
   }
 
   public handleEventVerification = async (req: Request, res: Response) => {
-    const { challenge, event } = req.body;
+    const { challenge } = req.body;
 
     if (challenge) {
       res.status(200).json({ challenge });

@@ -5,7 +5,7 @@ const slack_service_1 = require("../services/slack.service");
 class EventsController {
     constructor() {
         this.handleEventVerification = async (req, res) => {
-            const { challenge, event } = req.body;
+            const { challenge } = req.body;
             if (challenge) {
                 res.status(200).json({ challenge });
             }

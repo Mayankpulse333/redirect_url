@@ -14,6 +14,9 @@ const userController = new UserController();
 const channelController = new ChannelController();
 const eventsController = new EventsController();
 
+// Middleware
+app.use(express.json());
+
 // Connect to MongoDB
 mongoose
   .connect(config.mongodb.uri)

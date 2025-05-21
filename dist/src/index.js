@@ -17,6 +17,8 @@ const conversationController = new conversation_controller_1.ConversationControl
 const userController = new user_controller_1.UserController();
 const channelController = new channel_controller_1.ChannelController();
 const eventsController = new events_controller_1.EventsController();
+// Middleware
+app.use(express_1.default.json());
 // Connect to MongoDB
 mongoose_1.default
     .connect(config_1.config.mongodb.uri)
