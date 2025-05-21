@@ -182,7 +182,7 @@ class SlackService {
     /**
      * Fetch all messages with threads from a channel
      */
-    async getChannelMessagesWithThreads(channelId) {
+    async getChannelMessagesWithThreads(channelId, latest) {
         var _a, _b, _c, _d;
         try {
             const client = await this.ensureClient();
@@ -196,6 +196,7 @@ class SlackService {
                     channel: channelId,
                     limit: 1000,
                     cursor: cursor,
+                    oldest: latest,
                 });
                 const messages = result.messages || [];
                 for (const message of messages) {

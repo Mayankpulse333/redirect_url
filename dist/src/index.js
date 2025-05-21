@@ -10,11 +10,13 @@ const slackAuth_controller_1 = require("./controllers/slackAuth.controller");
 const conversation_controller_1 = require("./controllers/conversation.controller");
 const user_controller_1 = require("./controllers/user.controller");
 const channel_controller_1 = require("./controllers/channel.controller");
+const events_controller_1 = require("./controllers/events.controller");
 const app = (0, express_1.default)();
 const slackController = new slackAuth_controller_1.SlackController();
 const conversationController = new conversation_controller_1.ConversationController();
 const userController = new user_controller_1.UserController();
 const channelController = new channel_controller_1.ChannelController();
+const eventsController = new events_controller_1.EventsController();
 // Connect to MongoDB
 mongoose_1.default
     .connect(config_1.config.mongodb.uri)
@@ -31,6 +33,7 @@ app.get("/api/users", userController.getUserDetails);
 app.get("/api/team", userController.getTeamDetails);
 app.get("/api/channels/messages", channelController.getChannelMessages);
 app.get("/", slackController.getHealth);
+app.post("/events", eventsController.handleEventVerification);
 // Create HTTP server
 const port = process.env.PORT || config_1.config.port;
 app.listen(port, () => {

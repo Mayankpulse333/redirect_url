@@ -5,12 +5,14 @@ import { SlackController } from "./controllers/slackAuth.controller";
 import { ConversationController } from "./controllers/conversation.controller";
 import { UserController } from "./controllers/user.controller";
 import { ChannelController } from "./controllers/channel.controller";
+import { EventsController } from "./controllers/events.controller";
 
 const app = express();
 const slackController = new SlackController();
 const conversationController = new ConversationController();
 const userController = new UserController();
 const channelController = new ChannelController();
+const eventsController = new EventsController();
 
 // Connect to MongoDB
 mongoose
@@ -29,6 +31,7 @@ app.get("/api/users", userController.getUserDetails);
 app.get("/api/team", userController.getTeamDetails);
 app.get("/api/channels/messages", channelController.getChannelMessages);
 app.get("/", slackController.getHealth);
+app.post("/events", eventsController.handleEventVerification);
 
 // Create HTTP server
 const port = process.env.PORT || config.port;
