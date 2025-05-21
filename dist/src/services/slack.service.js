@@ -69,6 +69,7 @@ class SlackService {
      * Handle OAuth callback and save the response to database
      */
     async handleOAuthCallback(code, tenant) {
+        var _a;
         try {
             // Create a temporary client for OAuth
             const tempClient = new web_api_1.WebClient();
@@ -79,15 +80,15 @@ class SlackService {
                 redirect_uri: config_1.config.slack.redirectUri,
             });
             // // Save to database
-            // const slackAuth = new SlackAuth({
-            //   ...response,
-            //   tenant: tenant ?? "NA",
-            // });
-            // await slackAuth.save();
+            const slackAuth = new SlackAuth_1.SlackAuth({
+                ...response,
+                tenant: tenant !== null && tenant !== void 0 ? tenant : "NA",
+            });
+            await slackAuth.save();
             // // Update token and reinitialize client
-            // this.token = response?.authed_user?.access_token || null;
-            // this.client = null; // Force client reinitialization
-            // await this.initializeClient();
+            this.token = ((_a = response === null || response === void 0 ? void 0 : response.authed_user) === null || _a === void 0 ? void 0 : _a.access_token) || null;
+            this.client = null; // Force client reinitialization
+            await this.initializeClient();
             return response;
         }
         catch (error) {
