@@ -11,6 +11,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const slackAuthSchema = new mongoose_1.default.Schema({
     ok: { type: Boolean, required: true },
     app_id: { type: String, required: true },
+    tenant: { type: String, required: true },
     authed_user: {
         id: { type: String, required: true },
         scope: { type: String, required: true },

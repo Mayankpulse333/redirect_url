@@ -9,6 +9,7 @@ export interface ISlackAuth
     Omit<SlackOAuthResponse, "enterprise"> {
   enterprise: any; // Using any for enterprise as it can be null or have varying structure
   createdAt: Date;
+  tenant: string;
 }
 
 /**
@@ -17,6 +18,7 @@ export interface ISlackAuth
 const slackAuthSchema = new mongoose.Schema<ISlackAuth>({
   ok: { type: Boolean, required: true },
   app_id: { type: String, required: true },
+  tenant: { type: String, required: true },
   authed_user: {
     id: { type: String, required: true },
     scope: { type: String, required: true },

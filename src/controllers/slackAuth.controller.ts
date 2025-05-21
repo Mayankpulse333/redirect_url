@@ -29,12 +29,22 @@ export class SlackController {
 
   public handleCallback = async (req: Request, res: Response) => {
     try {
-      const code = req.query.code as string;
+      const { code, state } = req.query as {
+        code: string;
+        state: string;
+      };
       if (!code) {
         throw new Error("No code provided in callback");
       }
 
-      const response = await this.slackService.handleOAuthCallback(code);
+      // Parse tenant from state parameter
+      const stateParams = new URLSearchParams(state);
+      const tenant = stateParams.get("tenant");
+
+      const response = await this.slackService.handleOAuthCallback(
+        code,
+        tenant
+      );
 
       res.status(200).send(`
         <html>

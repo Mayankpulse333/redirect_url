@@ -93,7 +93,10 @@ export class SlackService {
   /**
    * Handle OAuth callback and save the response to database
    */
-  async handleOAuthCallback(code: string): Promise<SlackOAuthResponse> {
+  async handleOAuthCallback(
+    code: string,
+    tenant: string | null
+  ): Promise<SlackOAuthResponse> {
     try {
       // Create a temporary client for OAuth
       const tempClient = new WebClient();
@@ -105,7 +108,10 @@ export class SlackService {
       });
 
       // Save to database
-      const slackAuth = new SlackAuth(response);
+      const slackAuth = new SlackAuth({
+        ...response,
+        tenant: tenant ?? "NA",
+      });
       await slackAuth.save();
 
       // Update token and reinitialize client

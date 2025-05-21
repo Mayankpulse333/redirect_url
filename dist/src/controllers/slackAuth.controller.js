@@ -24,11 +24,14 @@ class SlackController {
         };
         this.handleCallback = async (req, res) => {
             try {
-                const code = req.query.code;
+                const { code, state } = req.query;
                 if (!code) {
                     throw new Error("No code provided in callback");
                 }
-                const response = await this.slackService.handleOAuthCallback(code);
+                // Parse tenant from state parameter
+                const stateParams = new URLSearchParams(state);
+                const tenant = stateParams.get("tenant");
+                const response = await this.slackService.handleOAuthCallback(code, tenant);
                 res.status(200).send(`
         <html>
           <body>

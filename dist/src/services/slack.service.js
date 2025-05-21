@@ -81,7 +81,7 @@ class SlackService {
     /**
      * Handle OAuth callback and save the response to database
      */
-    async handleOAuthCallback(code) {
+    async handleOAuthCallback(code, tenant) {
         var _a;
         try {
             // Create a temporary client for OAuth
@@ -93,7 +93,10 @@ class SlackService {
                 redirect_uri: config_1.config.slack.redirectUri,
             });
             // Save to database
-            const slackAuth = new SlackAuth_1.SlackAuth(response);
+            const slackAuth = new SlackAuth_1.SlackAuth({
+                ...response,
+                tenant: tenant !== null && tenant !== void 0 ? tenant : "NA",
+            });
             await slackAuth.save();
             // Update token and reinitialize client
             this.token = ((_a = response.authed_user) === null || _a === void 0 ? void 0 : _a.access_token) || null;
