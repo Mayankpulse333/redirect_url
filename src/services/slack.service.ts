@@ -85,7 +85,7 @@ export class SlackService {
       "chat:write",
     ].join(",");
 
-    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config.slack.redirectUri}`;
+    return `https://slack.com/oauth/v2/authorize?client_id=${config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config.slack.redirectUri}?tenant=zluri`;
   }
 
   /**
@@ -161,7 +161,7 @@ export class SlackService {
   async getFirstSlackAuthToken(): Promise<string | null> {
     try {
       const firstAuth = await SlackAuth.findOne().sort({ createdAt: -1 });
-      return firstAuth?.authed_user?.access_token || null;
+      return firstAuth?.access_token || null;
     } catch (error) {
       console.error("Error fetching SlackAuth token:", error);
       throw error;

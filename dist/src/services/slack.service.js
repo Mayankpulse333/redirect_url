@@ -75,7 +75,7 @@ class SlackService {
             "users:read",
             "chat:write",
         ].join(",");
-        return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config_1.config.slack.redirectUri}`;
+        return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&user_scope=${userScopes}&redirect_uri=${config_1.config.slack.redirectUri}?tenant=zluri`;
     }
     /**
      * Handle OAuth callback and save the response to database
@@ -143,10 +143,9 @@ class SlackService {
      * Get the first SlackAuth record's authed_user access token
      */
     async getFirstSlackAuthToken() {
-        var _a;
         try {
             const firstAuth = await SlackAuth_1.SlackAuth.findOne().sort({ createdAt: -1 });
-            return ((_a = firstAuth === null || firstAuth === void 0 ? void 0 : firstAuth.authed_user) === null || _a === void 0 ? void 0 : _a.access_token) || null;
+            return (firstAuth === null || firstAuth === void 0 ? void 0 : firstAuth.access_token) || null;
         }
         catch (error) {
             console.error("Error fetching SlackAuth token:", error);
