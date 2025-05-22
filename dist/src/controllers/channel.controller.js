@@ -6,7 +6,7 @@ class ChannelController {
     constructor() {
         this.getChannelMessages = async (req, res) => {
             try {
-                const { channelId, latest } = req.query;
+                const { channelId } = req.query;
                 if (!channelId || typeof channelId !== "string") {
                     res.status(400).json({
                         success: false,
@@ -14,14 +14,7 @@ class ChannelController {
                     });
                     return;
                 }
-                if (!latest || typeof latest !== "string") {
-                    res.status(400).json({
-                        success: false,
-                        error: "Latest is required and must be a string",
-                    });
-                    return;
-                }
-                const messages = await this.slackService.getChannelMessagesWithThreads(channelId, latest);
+                const messages = await this.slackService.getChannelMessagesWithThreads(channelId);
                 res.status(200).json({
                     success: true,
                     ...messages,

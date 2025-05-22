@@ -61,6 +61,7 @@ class SlackService {
             "users:read",
             "mpim:read",
             "im:read",
+            "team:read",
         ].join(",");
         const state = encodeURIComponent("tenant=zluri");
         return `https://slack.com/oauth/v2/authorize?client_id=${config_1.config.slack.clientId}&scope=${scopes}&user_scope=&redirect_uri=${config_1.config.slack.redirectUri}&state=${state}`;
@@ -182,7 +183,7 @@ class SlackService {
     /**
      * Fetch all messages with threads from a channel
      */
-    async getChannelMessagesWithThreads(channelId, latest) {
+    async getChannelMessagesWithThreads(channelId) {
         var _a, _b, _c, _d;
         try {
             const client = await this.ensureClient();
@@ -196,7 +197,6 @@ class SlackService {
                     channel: channelId,
                     limit: 1000,
                     cursor: cursor,
-                    oldest: latest,
                 });
                 const messages = result.messages || [];
                 for (const message of messages) {

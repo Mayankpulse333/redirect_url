@@ -69,6 +69,7 @@ export class SlackService {
       "users:read",
       "mpim:read",
       "im:read",
+      "team:read",
     ].join(",");
 
     const state = encodeURIComponent("tenant=zluri");
