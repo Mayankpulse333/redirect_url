@@ -20,7 +20,7 @@ export class EventsController {
       type,
       challenge,
       event,
-      req.body.authorization
+      req.body.authorizations
     );
 
     res.status(200).json({ message: req.body });

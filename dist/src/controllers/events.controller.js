@@ -19,7 +19,7 @@ class EventsController {
                 res.status(200).send({ challenge });
                 return;
             }
-            await getSlackDataFromEventsListener(type, challenge, event, req.body.authorization);
+            await getSlackDataFromEventsListener(type, challenge, event, req.body.authorizations);
             res.status(200).json({ message: req.body });
         };
     }
