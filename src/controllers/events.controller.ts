@@ -91,6 +91,7 @@ const getSlackDataFromEventsListener = async (
         );
         eventMsg = {
           type: event.type,
+          subtype: ChatSubType.MESSAGE_CHANGED,
           ...event.message,
           channel: event.channel,
           ts: event.message.ts,

@@ -62,6 +62,7 @@ const getSlackDataFromEventsListener = async (type, challenge, event, authorizat
                 console.log(`[getSlackDataFromEventsListener] Processing message changed event for channel: ${event.channel}`);
                 eventMsg = {
                     type: event.type,
+                    subtype: ChatType_1.ChatSubType.MESSAGE_CHANGED,
                     ...event.message,
                     channel: event.channel,
                     ts: event.message.ts,
