@@ -8,4 +8,5 @@ var ChatType;
 var ChatSubType;
 (function (ChatSubType) {
     ChatSubType["MESSAGE_CHANGED"] = "message_changed";
+    ChatSubType["MESSAGE_DELETED"] = "message_deleted";
 })(ChatSubType || (exports.ChatSubType = ChatSubType = {}));

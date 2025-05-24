@@ -98,6 +98,20 @@ const getSlackDataFromEventsListener = async (
           event_ts: event.message.event_ts,
           channel_type: event.channel_type,
         };
+      } else if (event.subtype == ChatSubType.MESSAGE_DELETED) {
+        eventMsg = {
+          type: event.type,
+          subtype: ChatSubType.MESSAGE_CHANGED,
+          channel: event.channel,
+          ...event.previous_message,
+          ts: event.previous_message.ts,
+          thread_ts: event.previous_message.thread_ts,
+          event_ts: event.ts,
+          channel_type: event.channel_type,
+        };
+
+        await deleteEventMessageDB(tenant, eventMsg);
+        return;
       }
       await updateEventMessageOnDB(tenant, eventMsg);
     }
@@ -250,5 +264,55 @@ export const writeChatMessageToDB = async (
     } catch (error: any) {
       throw new Error("Error saving data to DB");
     }
+  }
+};
+
+const deleteEventMessageDB = async (tenant: string, message: any) => {
+  const chatData = await ChatMessage.find({
+    channel: message.channel,
+    tenant: tenant,
+    $or: [{ ts: message.ts }, { thread_ts: message.thread_ts }],
+  });
+
+  if (!chatData || chatData.length === 0) {
+    throw new Error(`Chat Message not found on Db for : ${message} `);
+  }
+
+  if (message.parent_user_id) {
+    // Find the parent message that contains the thread
+    const parentMessage = chatData.find(
+      (chat) => chat.thread_ts === message.thread_ts
+    );
+
+    if (parentMessage && parentMessage.thread) {
+      // Find the index of the message to delete in the thread array
+      const threadIndex = parentMessage.thread.findIndex(
+        (threadMsg: any) => threadMsg.ts === message.ts
+      );
+
+      if (threadIndex !== -1) {
+        // Remove the message from the thread array
+        parentMessage.thread.splice(threadIndex, 1);
+
+        // Update the database with the modified thread
+        await ChatMessage.findByIdAndUpdate(parentMessage._id, {
+          thread: parentMessage.thread,
+        });
+
+        console.log(
+          `[deleteEventMessageDB] Successfully deleted thread message with ts: ${message.ts}`
+        );
+      }
+    }
+  } else {
+    // For non-thread messages, delete the entire message
+    await ChatMessage.deleteOne({
+      tenant,
+      channel: message.channel,
+      ts: message.ts,
+    });
+    console.log(
+      `[deleteEventMessageDB] Successfully deleted message with ts: ${message.ts}`
+    );
   }
 };
