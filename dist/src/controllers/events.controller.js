@@ -62,7 +62,6 @@ const getSlackDataFromEventsListener = async (type, challenge, event, authorizat
                 console.log(`[getSlackDataFromEventsListener] Processing message changed event for channel: ${event.channel}`);
                 eventMsg = {
                     type: event.type,
-                    subtype: ChatType_1.ChatSubType.MESSAGE_CHANGED,
                     ...event.message,
                     channel: event.channel,
                     ts: event.message.ts,
@@ -94,6 +93,7 @@ const updateEventMessageOnDB = async (tenant, message) => {
     console.log(`[updateEventMessageOnDB] Updating message for tenant: ${tenant}, channel: ${message.channel}`);
     const userData = await (0, exports.getUserDataFromMongo)(message.user, tenant);
     console.log(`[updateEventMessageOnDB] Retrieved user data for user: ${message.user}`);
+    console.log("Final Revived Messasge : ", message);
     let messageData, messageId = message.ts;
     if (message.thread_ts) {
         messageId = message.thread_ts;
@@ -107,7 +107,7 @@ const updateEventMessageOnDB = async (tenant, message) => {
     });
     if (messageData) {
         console.log(`[updateEventMessageOnDB] Found existing message, updating content`);
-        if (message.parent_user_id) {
+        if (message.parent_user_id || message.subtype == "thread_broadcast") {
             const existingThreadIndex = (_a = messageData.thread) === null || _a === void 0 ? void 0 : _a.findIndex((x) => x.ts === message.ts);
             if (existingThreadIndex !== -1 &&
                 existingThreadIndex !== undefined &&

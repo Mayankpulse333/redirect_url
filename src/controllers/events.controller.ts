@@ -91,7 +91,6 @@ const getSlackDataFromEventsListener = async (
         );
         eventMsg = {
           type: event.type,
-          subtype: ChatSubType.MESSAGE_CHANGED,
           ...event.message,
           channel: event.channel,
           ts: event.message.ts,
@@ -130,6 +129,8 @@ const updateEventMessageOnDB = async (tenant: string, message: any) => {
     `[updateEventMessageOnDB] Retrieved user data for user: ${message.user}`
   );
 
+  console.log("Final Revived Messasge : ", message);
+
   let messageData,
     messageId = message.ts;
 
@@ -151,7 +152,7 @@ const updateEventMessageOnDB = async (tenant: string, message: any) => {
     console.log(
       `[updateEventMessageOnDB] Found existing message, updating content`
     );
-    if (message.parent_user_id) {
+    if (message.parent_user_id || message.subtype == "thread_broadcast") {
       const existingThreadIndex = messageData.thread?.findIndex(
         (x: any) => x.ts === message.ts
       );
