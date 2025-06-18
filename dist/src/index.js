@@ -11,7 +11,6 @@ const conversation_controller_1 = require("./controllers/conversation.controller
 const user_controller_1 = require("./controllers/user.controller");
 const channel_controller_1 = require("./controllers/channel.controller");
 const events_controller_1 = require("./controllers/events.controller");
-const axios_1 = __importDefault(require("axios"));
 const INTERCOM_CLIENT_ID = process.env.INTERCOM_CLIENT_ID;
 const INTERCOM_CLIENT_SECRET = process.env.INTERCOM_CLIENT_SECRET;
 const INTERCOM_REDIRECT_URI = process.env.INTERCOM_REDIRECT_URI;
@@ -77,24 +76,29 @@ app.get("/intercom/oauth/callback", async (req, res) => {
     console.log("[OAuth Callback] Tenant:", tenant);
     try {
         console.log("[OAuth Callback] Exchanging code for access token...");
-        const response = await axios_1.default.post("https://api.intercom.io/auth/eagle/token", {
-            client_id: INTERCOM_CLIENT_ID,
-            client_secret: INTERCOM_CLIENT_SECRET,
-            code,
-            redirect_uri: INTERCOM_REDIRECT_URI,
-            grant_type: "authorization_code",
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-        });
-        const { access_token, token_type } = response.data;
+        // const response = await axios.post(
+        //   "https://api.intercom.io/auth/eagle/token",
+        //   {
+        //     client_id: INTERCOM_CLIENT_ID,
+        //     client_secret: INTERCOM_CLIENT_SECRET,
+        //     code,
+        //     redirect_uri: INTERCOM_REDIRECT_URI,
+        //     grant_type: "authorization_code",
+        //   },
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Accept: "application/json",
+        //     },
+        //   }
+        // );
+        // const { access_token, token_type } = response.data;
         console.log("[OAuth Callback] Token exchange successful");
-        console.log("[OAuth Callback] Access Token:", access_token);
-        console.log("[OAuth Callback] Token Type:", token_type);
+        // console.log("[OAuth Callback] Access Token:", access_token);
+        // console.log("[OAuth Callback] Token Type:", token_type);
         // Persist token as needed (e.g., to DB)
-        res.json({ message: "Success", access_token, token_type });
+        // res.json({ message: "Success", access_token, token_type });
+        res.json({ code, message: "Successfully fetched" });
     }
     catch (error) {
         const errorMsg = ((_b = error.response) === null || _b === void 0 ? void 0 : _b.data) || error.message;

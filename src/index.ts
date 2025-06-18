@@ -90,31 +90,32 @@ app.get("/intercom/oauth/callback", async (req, res) => {
   try {
     console.log("[OAuth Callback] Exchanging code for access token...");
 
-    const response = await axios.post(
-      "https://api.intercom.io/auth/eagle/token",
-      {
-        client_id: INTERCOM_CLIENT_ID,
-        client_secret: INTERCOM_CLIENT_SECRET,
-        code,
-        redirect_uri: INTERCOM_REDIRECT_URI,
-        grant_type: "authorization_code",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
+    // const response = await axios.post(
+    //   "https://api.intercom.io/auth/eagle/token",
+    //   {
+    //     client_id: INTERCOM_CLIENT_ID,
+    //     client_secret: INTERCOM_CLIENT_SECRET,
+    //     code,
+    //     redirect_uri: INTERCOM_REDIRECT_URI,
+    //     grant_type: "authorization_code",
+    //   },
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Accept: "application/json",
+    //     },
+    //   }
+    // );
 
-    const { access_token, token_type } = response.data;
+    // const { access_token, token_type } = response.data;
 
     console.log("[OAuth Callback] Token exchange successful");
-    console.log("[OAuth Callback] Access Token:", access_token);
-    console.log("[OAuth Callback] Token Type:", token_type);
+    // console.log("[OAuth Callback] Access Token:", access_token);
+    // console.log("[OAuth Callback] Token Type:", token_type);
 
     // Persist token as needed (e.g., to DB)
-    res.json({ message: "Success", access_token, token_type });
+    // res.json({ message: "Success", access_token, token_type });
+    res.json({ code, message: "Successfully fetched" });
   } catch (error: any) {
     const errorMsg = error.response?.data || error.message;
     console.error("[OAuth Callback] Token exchange failed:", errorMsg);
