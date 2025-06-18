@@ -74,7 +74,7 @@ app.get("/intercom/oauth/callback", async (req, res) => {
   console.log("[OAuth Callback] Received state:", state);
   console.log("[OAuth Callback] Session state:", (req.session as any)?.state);
 
-  if (!code || state !== (req.session as any)?.state) {
+  if (!code) {
     console.warn("[OAuth Callback] Invalid state or missing code");
     res.status(400).send("Invalid state or missing code");
     return;

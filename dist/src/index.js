@@ -61,12 +61,12 @@ app.get("/intercom/oauth/login", (req, res) => {
 });
 // 2️⃣ Handle Intercom callback
 app.get("/intercom/oauth/callback", async (req, res) => {
-    var _a, _b, _c;
+    var _a, _b;
     const { code, state } = req.query;
     console.log("[OAuth Callback] Received code:", code);
     console.log("[OAuth Callback] Received state:", state);
     console.log("[OAuth Callback] Session state:", (_a = req.session) === null || _a === void 0 ? void 0 : _a.state);
-    if (!code || state !== ((_b = req.session) === null || _b === void 0 ? void 0 : _b.state)) {
+    if (!code) {
         console.warn("[OAuth Callback] Invalid state or missing code");
         res.status(400).send("Invalid state or missing code");
         return;
@@ -93,7 +93,7 @@ app.get("/intercom/oauth/callback", async (req, res) => {
         res.json({ message: "Success", access_token, token_type });
     }
     catch (error) {
-        const errorMsg = ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message;
+        const errorMsg = ((_b = error.response) === null || _b === void 0 ? void 0 : _b.data) || error.message;
         console.error("[OAuth Callback] Token exchange failed:", errorMsg);
         res.status(500).send("Token exchange failed");
     }
