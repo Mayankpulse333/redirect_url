@@ -11,6 +11,10 @@ const conversation_controller_1 = require("./controllers/conversation.controller
 const user_controller_1 = require("./controllers/user.controller");
 const channel_controller_1 = require("./controllers/channel.controller");
 const events_controller_1 = require("./controllers/events.controller");
+const axios_1 = __importDefault(require("axios"));
+const INTERCOM_CLIENT_ID = process.env.INTERCOM_CLIENT_ID;
+const INTERCOM_CLIENT_SECRET = process.env.INTERCOM_CLIENT_SECRET;
+const INTERCOM_REDIRECT_URI = process.env.INTERCOM_REDIRECT_URI;
 const app = (0, express_1.default)();
 const slackController = new slackAuth_controller_1.SlackController();
 const conversationController = new conversation_controller_1.ConversationController();
@@ -36,6 +40,64 @@ app.get("/api/team", userController.getTeamDetails);
 app.get("/api/channels/messages", channelController.getChannelMessages);
 app.get("/", slackController.getHealth);
 app.post("/events", eventsController.handleEventVerification);
+app.get("/intercom/oauth/login", (req, res) => {
+    const url = `https://app.intercom.com/oauth?client_id=${INTERCOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(INTERCOM_REDIRECT_URI || "")}`;
+    console.log("[OAuth Login] Redirecting to:", url);
+    const intercomOAuthUrl = url; // your Intercom OAuth URL
+    res.status(200).header("Content-Type", "text/html; charset=utf-8").send(`
+    <html>
+      <body>
+        <a href="${intercomOAuthUrl}">
+          <img
+            alt="Connect with Intercom"
+            src="https://iconduck.com/assets/images/iconduck/intercom-8167-256.png"
+            width="139"
+            height="40"
+          />
+        </a>
+      </body>
+    </html>
+  `);
+});
+// 2️⃣ Handle Intercom callback
+app.get("/intercom/oauth/callback", async (req, res) => {
+    var _a, _b, _c;
+    const { code, state } = req.query;
+    console.log("[OAuth Callback] Received code:", code);
+    console.log("[OAuth Callback] Received state:", state);
+    console.log("[OAuth Callback] Session state:", (_a = req.session) === null || _a === void 0 ? void 0 : _a.state);
+    if (!code || state !== ((_b = req.session) === null || _b === void 0 ? void 0 : _b.state)) {
+        console.warn("[OAuth Callback] Invalid state or missing code");
+        res.status(400).send("Invalid state or missing code");
+        return;
+    }
+    try {
+        console.log("[OAuth Callback] Exchanging code for access token...");
+        const response = await axios_1.default.post("https://api.intercom.io/auth/eagle/token", {
+            client_id: INTERCOM_CLIENT_ID,
+            client_secret: INTERCOM_CLIENT_SECRET,
+            code,
+            redirect_uri: INTERCOM_REDIRECT_URI,
+            grant_type: "authorization_code",
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+        });
+        const { access_token, token_type } = response.data;
+        console.log("[OAuth Callback] Token exchange successful");
+        console.log("[OAuth Callback] Access Token:", access_token);
+        console.log("[OAuth Callback] Token Type:", token_type);
+        // Persist token as needed (e.g., to DB)
+        res.json({ message: "Success", access_token, token_type });
+    }
+    catch (error) {
+        const errorMsg = ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message;
+        console.error("[OAuth Callback] Token exchange failed:", errorMsg);
+        res.status(500).send("Token exchange failed");
+    }
+});
 // Create HTTP server
 const port = process.env.PORT || config_1.config.port;
 app.listen(port, () => {
