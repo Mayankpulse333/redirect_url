@@ -42,9 +42,11 @@ app.get("/", slackController.getHealth);
 app.post("/events", eventsController.handleEventVerification);
 
 app.get("/intercom/oauth/login", (req, res) => {
+  const state = encodeURIComponent("tenant=zluri");
+
   const url = `https://app.intercom.com/oauth?client_id=${INTERCOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     INTERCOM_REDIRECT_URI || ""
-  )}`;
+  )}&state=${state}`;
 
   console.log("[OAuth Login] Redirecting to:", url);
 
@@ -79,6 +81,11 @@ app.get("/intercom/oauth/callback", async (req, res) => {
     res.status(400).send("Invalid state or missing code");
     return;
   }
+
+  const stateParams = new URLSearchParams(state as string);
+  const tenant = stateParams.get("tenant") as string;
+
+  console.log("[OAuth Callback] Tenant:", tenant);
 
   try {
     console.log("[OAuth Callback] Exchanging code for access token...");

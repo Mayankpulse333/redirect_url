@@ -41,7 +41,8 @@ app.get("/api/channels/messages", channelController.getChannelMessages);
 app.get("/", slackController.getHealth);
 app.post("/events", eventsController.handleEventVerification);
 app.get("/intercom/oauth/login", (req, res) => {
-    const url = `https://app.intercom.com/oauth?client_id=${INTERCOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(INTERCOM_REDIRECT_URI || "")}`;
+    const state = encodeURIComponent("tenant=zluri");
+    const url = `https://app.intercom.com/oauth?client_id=${INTERCOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(INTERCOM_REDIRECT_URI || "")}&state=${state}`;
     console.log("[OAuth Login] Redirecting to:", url);
     const intercomOAuthUrl = url; // your Intercom OAuth URL
     res.status(200).header("Content-Type", "text/html; charset=utf-8").send(`
@@ -71,6 +72,9 @@ app.get("/intercom/oauth/callback", async (req, res) => {
         res.status(400).send("Invalid state or missing code");
         return;
     }
+    const stateParams = new URLSearchParams(state);
+    const tenant = stateParams.get("tenant");
+    console.log("[OAuth Callback] Tenant:", tenant);
     try {
         console.log("[OAuth Callback] Exchanging code for access token...");
         const response = await axios_1.default.post("https://api.intercom.io/auth/eagle/token", {
