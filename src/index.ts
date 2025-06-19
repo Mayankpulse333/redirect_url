@@ -13,14 +13,15 @@ const INTERCOM_CLIENT_SECRET = process.env.INTERCOM_CLIENT_SECRET;
 const INTERCOM_REDIRECT_URI = process.env.INTERCOM_REDIRECT_URI;
 
 const app = express();
+app.use(express.json());
+
 const slackController = new SlackController();
 const conversationController = new ConversationController();
 const userController = new UserController();
 const channelController = new ChannelController();
 const eventsController = new EventsController();
 
-// Middleware
-app.use(express.json());
+console.log("MongoDB URI:", config.mongodb.uri);
 
 // Connect to MongoDB
 mongoose
