@@ -123,6 +123,24 @@ app.get("/intercom/oauth/callback", async (req, res) => {
   }
 });
 
+app.post("/webhook/read", (req, res) => {
+  try {
+    const data = req.body;
+
+    // Log the entire payload clearly
+    console.log("📦 Received Read.ai Webhook Payload:");
+    console.log(JSON.stringify(data, null, 2)); // Pretty-print JSON
+
+    // Optional: Write to a file or send to a logging service
+    // fs.writeFileSync('webhook-log.json', JSON.stringify(data, null, 2));
+
+    res.status(200).json({ status: "Received successfully" });
+  } catch (error) {
+    console.error("❌ Error processing webhook:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Create HTTP server
 const port = process.env.PORT || config.port;
 
