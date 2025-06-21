@@ -134,7 +134,10 @@ app.post("/webhook/read", (req, res) => {
     console.log("📦 Payload:", JSON.stringify(req.query, null, 2));
     console.log("📦 Payload:", JSON.stringify(req.params, null, 2));
 
-    res.status(200).json({ status: "Received successfully" });
+    res.status(200).json({
+      success: true,
+      status: "Received successfully",
+    });
   } catch (err: any) {
     console.error("❌ Error processing webhook:", err);
     res.status(500).json({ error: "Internal Server Error" });
