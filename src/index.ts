@@ -128,7 +128,9 @@ app.post("/webhook/read", (req, res) => {
   try {
     const data = req.body;
 
-    // Log the entire payload clearly
+    // Log the headers and payload clearly
+    console.log("📦 Received Read.ai Webhook Headers:");
+    console.log(JSON.stringify(req.headers, null, 2)); // Pretty-print headers
     console.log("📦 Received Read.ai Webhook Payload:");
     console.log(JSON.stringify(data, null, 2)); // Pretty-print JSON
 
@@ -147,4 +149,58 @@ const port = process.env.PORT || config.port;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+app.get("/clickup/oauth/callback", async (req, res) => {
+  const { code, state } = req.query;
+
+  console.log("[OAuth Callback] Received code:", code);
+  console.log("[OAuth Callback] Received state:", state);
+  console.log("[OAuth Callback] Session state:", (req.session as any)?.state);
+
+  if (!code) {
+    console.warn("[OAuth Callback] Invalid state or missing code");
+    res.status(400).send("Invalid state or missing code");
+    return;
+  }
+
+  const stateParams = new URLSearchParams(state as string);
+  const tenant = stateParams.get("tenant") as string;
+
+  console.log("[OAuth Callback] Tenant:", tenant);
+
+  try {
+    console.log("[OAuth Callback] Exchanging code for access token...");
+
+    // const response = await axios.post(
+    //   "https://api.intercom.io/auth/eagle/token",
+    //   {
+    //     client_id: INTERCOM_CLIENT_ID,
+    //     client_secret: INTERCOM_CLIENT_SECRET,
+    //     code,
+    //     redirect_uri: INTERCOM_REDIRECT_URI,
+    //     grant_type: "authorization_code",
+    //   },
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Accept: "application/json",
+    //     },
+    //   }
+    // );
+
+    // const { access_token, token_type } = response.data;
+
+    console.log("[OAuth Callback] Token exchange successful");
+    // console.log("[OAuth Callback] Access Token:", access_token);
+    // console.log("[OAuth Callback] Token Type:", token_type);
+
+    // Persist token as needed (e.g., to DB)
+    // res.json({ message: "Success", access_token, token_type });
+    res.json({ code, message: "Successfully fetched" });
+  } catch (error: any) {
+    const errorMsg = error.response?.data || error.message;
+    console.error("[OAuth Callback] Token exchange failed:", errorMsg);
+    res.status(500).send("Token exchange failed");
+  }
 });

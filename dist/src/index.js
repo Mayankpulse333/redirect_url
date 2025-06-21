@@ -109,7 +109,9 @@ app.get("/intercom/oauth/callback", async (req, res) => {
 app.post("/webhook/read", (req, res) => {
     try {
         const data = req.body;
-        // Log the entire payload clearly
+        // Log the headers and payload clearly
+        console.log("📦 Received Read.ai Webhook Headers:");
+        console.log(JSON.stringify(req.headers, null, 2)); // Pretty-print headers
         console.log("📦 Received Read.ai Webhook Payload:");
         console.log(JSON.stringify(data, null, 2)); // Pretty-print JSON
         // Optional: Write to a file or send to a logging service
@@ -125,4 +127,50 @@ app.post("/webhook/read", (req, res) => {
 const port = process.env.PORT || config_1.config.port;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+});
+app.get("/clickup/oauth/callback", async (req, res) => {
+    var _a, _b;
+    const { code, state } = req.query;
+    console.log("[OAuth Callback] Received code:", code);
+    console.log("[OAuth Callback] Received state:", state);
+    console.log("[OAuth Callback] Session state:", (_a = req.session) === null || _a === void 0 ? void 0 : _a.state);
+    if (!code) {
+        console.warn("[OAuth Callback] Invalid state or missing code");
+        res.status(400).send("Invalid state or missing code");
+        return;
+    }
+    const stateParams = new URLSearchParams(state);
+    const tenant = stateParams.get("tenant");
+    console.log("[OAuth Callback] Tenant:", tenant);
+    try {
+        console.log("[OAuth Callback] Exchanging code for access token...");
+        // const response = await axios.post(
+        //   "https://api.intercom.io/auth/eagle/token",
+        //   {
+        //     client_id: INTERCOM_CLIENT_ID,
+        //     client_secret: INTERCOM_CLIENT_SECRET,
+        //     code,
+        //     redirect_uri: INTERCOM_REDIRECT_URI,
+        //     grant_type: "authorization_code",
+        //   },
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Accept: "application/json",
+        //     },
+        //   }
+        // );
+        // const { access_token, token_type } = response.data;
+        console.log("[OAuth Callback] Token exchange successful");
+        // console.log("[OAuth Callback] Access Token:", access_token);
+        // console.log("[OAuth Callback] Token Type:", token_type);
+        // Persist token as needed (e.g., to DB)
+        // res.json({ message: "Success", access_token, token_type });
+        res.json({ code, message: "Successfully fetched" });
+    }
+    catch (error) {
+        const errorMsg = ((_b = error.response) === null || _b === void 0 ? void 0 : _b.data) || error.message;
+        console.error("[OAuth Callback] Token exchange failed:", errorMsg);
+        res.status(500).send("Token exchange failed");
+    }
 });
