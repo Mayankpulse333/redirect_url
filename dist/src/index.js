@@ -11,7 +11,6 @@ const conversation_controller_1 = require("./controllers/conversation.controller
 const user_controller_1 = require("./controllers/user.controller");
 const channel_controller_1 = require("./controllers/channel.controller");
 const events_controller_1 = require("./controllers/events.controller");
-const crypto_1 = __importDefault(require("crypto"));
 const INTERCOM_CLIENT_ID = process.env.INTERCOM_CLIENT_ID;
 const INTERCOM_CLIENT_SECRET = process.env.INTERCOM_CLIENT_SECRET;
 const INTERCOM_REDIRECT_URI = process.env.INTERCOM_REDIRECT_URI;
@@ -111,33 +110,13 @@ app.use("/webhook/read", express_1.default.raw({ type: "*/*" }));
 app.post("/webhook/read", (req, res) => {
     try {
         console.log("📦 Headers:", JSON.stringify(req.headers, null, 2));
-        console.log("📦 Payload:", req.body.toString());
-        const secret = process.env.READ_WEBHOOK_SECRET;
-        const receivedSig = req.headers["x-read-signature"];
-        if (!receivedSig) {
-            console.error("❌ Missing signature header");
-            res.status(401).json({ error: "Missing signature" });
-            return;
-        }
-        // Compute HMAC
-        const expected = crypto_1.default
-            .createHmac("sha256", secret)
-            .update(req.body)
-            .digest("hex");
-        // Constant-time compare
-        const bufReceived = Buffer.from(receivedSig, "hex");
-        const bufExpected = Buffer.from(expected, "hex");
-        const valid = bufReceived.length === bufExpected.length &&
-            crypto_1.default.timingSafeEqual(bufReceived, bufExpected);
-        if (!valid) {
-            console.error("❌ Invalid signature");
-            res.status(401).json({ error: "Invalid signature" });
-            return;
-        }
-        // ✅ Verified
-        const data = JSON.parse(req.body.toString());
-        // …handle data…
-        res.status(200).json({ status: "Received successfully" });
+        console.log("📦 Payload:", JSON.stringify(req.body, null, 2));
+        console.log("📦 Payload:", JSON.stringify(req.query, null, 2));
+        console.log("📦 Payload:", JSON.stringify(req.params, null, 2));
+        res.status(200).json({
+            success: true,
+            status: "Received successfully",
+        });
     }
     catch (err) {
         console.error("❌ Error processing webhook:", err);

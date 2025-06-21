@@ -130,38 +130,9 @@ app.use("/webhook/read", express.raw({ type: "*/*" }));
 app.post("/webhook/read", (req, res) => {
   try {
     console.log("📦 Headers:", JSON.stringify(req.headers, null, 2));
-    console.log("📦 Payload:", req.body.toString());
-
-    const secret = process.env.READ_WEBHOOK_SECRET!;
-    const receivedSig = req.headers["x-read-signature"] as string;
-    if (!receivedSig) {
-      console.error("❌ Missing signature header");
-      res.status(401).json({ error: "Missing signature" });
-      return;
-    }
-
-    // Compute HMAC
-    const expected = crypto
-      .createHmac("sha256", secret)
-      .update(req.body)
-      .digest("hex");
-
-    // Constant-time compare
-    const bufReceived = Buffer.from(receivedSig, "hex");
-    const bufExpected = Buffer.from(expected, "hex");
-    const valid =
-      bufReceived.length === bufExpected.length &&
-      crypto.timingSafeEqual(bufReceived, bufExpected);
-
-    if (!valid) {
-      console.error("❌ Invalid signature");
-      res.status(401).json({ error: "Invalid signature" });
-      return;
-    }
-
-    // ✅ Verified
-    const data = JSON.parse(req.body.toString());
-    // …handle data…
+    console.log("📦 Payload:", JSON.stringify(req.body, null, 2));
+    console.log("📦 Payload:", JSON.stringify(req.query, null, 2));
+    console.log("📦 Payload:", JSON.stringify(req.params, null, 2));
 
     res.status(200).json({ status: "Received successfully" });
   } catch (err: any) {
