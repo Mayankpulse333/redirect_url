@@ -123,6 +123,22 @@ app.post("/webhook/read", (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+app.post("/webhook/read/canny", (req, res) => {
+    try {
+        console.log("📦 Headers:", JSON.stringify(req.headers, null, 2));
+        console.log("📦 Payload:", JSON.stringify(req.body, null, 2));
+        console.log("📦 Payload:", JSON.stringify(req.query, null, 2));
+        console.log("📦 Payload:", JSON.stringify(req.params, null, 2));
+        res.status(200).json({
+            success: true,
+            status: "Received successfully",
+        });
+    }
+    catch (err) {
+        console.error("❌ Error processing webhook:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 // Create HTTP server
 const port = process.env.PORT || config_1.config.port;
 app.listen(port, () => {
