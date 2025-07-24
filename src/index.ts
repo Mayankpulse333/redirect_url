@@ -233,8 +233,6 @@ app.get("/integration/productboard/callback", async (req, res) => {
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
-    console.log("tokenResponse", tokenResponse.data);
-
     res.json(tokenResponse.data);
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";

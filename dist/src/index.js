@@ -193,7 +193,6 @@ app.get("/integration/productboard/callback", async (req, res) => {
             client_secret: clientSecret,
             code_verifier: codeVerifier,
         }), { headers: { "Content-Type": "application/x-www-form-urlencoded" } });
-        console.log("tokenResponse", tokenResponse.data);
         res.json(tokenResponse.data);
     }
     catch (err) {
