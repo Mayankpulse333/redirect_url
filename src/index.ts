@@ -145,16 +145,16 @@ app.post("/webhook/read", (req, res) => {
 });
 
 app.get("/productboard", (req, res) => {
-  try {
-    const state = encodeURIComponent("tenant=zluri");
+  const state = encodeURIComponent("tenant=zluri");
 
-    const clientId = "Q6apGyK-6HJDAYXEgDHkYNTRwm7JJWVtz6orqYemm7I";
+  const clientId = "Q6apGyK-6HJDAYXEgDHkYNTRwm7JJWVtz6orqYemm7I";
 
-    const clientSecret = "BSVdg_kMZWbQKniEm8k6VwBy75zlFD4JPNN1_SqHaGU";
-    const redirectUri =
-      "https://auth.staging.pulsegen.io/integration/productboard/callback";
+  const clientSecret = "BSVdg_kMZWbQKniEm8k6VwBy75zlFD4JPNN1_SqHaGU";
+  const redirectUri = encodeURIComponent(
+    "https://auth.staging.pulsegen.io/integration/productboard/callback"
+  );
 
-    res.status(200).header("Content-Type", "text/html; charset=utf-8").send(`
+  res.status(200).header("Content-Type", "text/html; charset=utf-8").send(`
       <html>
         <body>
          <a href="https://app.productboard.com/oauth2/authorize?client_id=${clientId}
@@ -166,10 +166,6 @@ app.get("/productboard", (req, res) => {
         </body>
       </html>
     `);
-  } catch (err: any) {
-    console.error("❌ Error processing webhook:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 });
 
 app.post("/webhook/read/canny", (req, res) => {
@@ -249,7 +245,3 @@ app.get("/clickup/oauth/callback", async (req, res) => {
     res.status(500).send("Token exchange failed");
   }
 });
-
-
-
-https://auth.staging.pulsegen.io/integration/productboard/callback?code=KUQ0d1OcRyB5HMcORpDKZhF0X0BQ0ySebN-zQbSItsw&state=tenant%3Dzluri

@@ -123,6 +123,24 @@ app.post("/webhook/read", (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+app.get("/productboard", (req, res) => {
+    const state = encodeURIComponent("tenant=zluri");
+    const clientId = "Q6apGyK-6HJDAYXEgDHkYNTRwm7JJWVtz6orqYemm7I";
+    const clientSecret = "BSVdg_kMZWbQKniEm8k6VwBy75zlFD4JPNN1_SqHaGU";
+    const redirectUri = encodeURIComponent("https://auth.staging.pulsegen.io/integration/productboard/callback");
+    res.status(200).header("Content-Type", "text/html; charset=utf-8").send(`
+      <html>
+        <body>
+         <a href="https://app.productboard.com/oauth2/authorize?client_id=${clientId}
+&response_type=code
+&redirect_uri=${redirectUri}
+&state=
+&code_challenge=YTQxYjYxOTRjOTEwMWYwNDNjZmE1ZDkzZTQ5YzU3MzE1YWRkZDliNjM4NGRiYzMwNDgyN2U2ZDA4Y2RiOGVkZg
+&code_challenge_method=S256" target="_blank">Import features from Productboard</a>
+        </body>
+      </html>
+    `);
+});
 app.post("/webhook/read/canny", (req, res) => {
     try {
         console.log("📦 Headers:", JSON.stringify(req.headers, null, 2));
